@@ -1,5 +1,3 @@
-[README.md](https://github.com/user-attachments/files/35239876/README.md)
-```text
  ____   _____   ____  _   _  ____   ___  _____ __   __
 / ___| | ____| / ___|| | | ||  _ \ |_ _||_   _|\ \ / /
 \___ \ |  _|  | |    | | | || |_) | | |   | |   \ V /
@@ -19,13 +17,13 @@
 
 Página educativa donde escribes una contraseña y, debajo, ves **qué tan segura es** y **de cuántas formas podrían vulnerarla en la web**. Backend Node sin dependencias + frontend HTML/CSS/JS.
 
-```text
- .      *        _.-""""""-._      .         /\        +
-     .         .-'  .   .   '-.        *    /  \    .
-  ==========.-----------------.==========   | () |
-  *         '.   .    .   .  .'       .     |    |  *
-        .      '-.......-'        +       /_|____|_\
-```
+`
+ .      *       _.-""""""-._      .            /\        +
+    .        .-'  .   .     '-.        *      /  \    .
+   ==========.-----------------.==========   | () |
+   *         '.   .    .   .  .'       .     |    |  *
+         .      '-.......-'       +       /_|____|_\
+`
 
 ## Novedades de la v1.5
 
