@@ -23,7 +23,7 @@ Página educativa donde escribes una contraseña y, debajo, ves **qué tan segur
     .        .-'  .   .     '-.        *      /  \    .
    ==========.-----------------.==========   | () |
    *         '.   .    .   .  .'       .     |    |  *
-         .      '-.......-'       +       /_|____|_\
+         .      '-.......-'       +        /_|____|_\
 `
 ```
 ## Novedades de la v1.5
