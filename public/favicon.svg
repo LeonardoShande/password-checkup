@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Security Tech">
+  <title>Security Tech</title>
+  <defs>
+    <linearGradient id="chassis" x1="10" y1="14" x2="54" y2="56" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#2a1a52"/>
+      <stop offset="1" stop-color="#140b2b"/>
+    </linearGradient>
+    <linearGradient id="lid" x1="8" y1="14" x2="56" y2="30" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#3a2470"/>
+      <stop offset="1" stop-color="#1c1040"/>
+    </linearGradient>
+    <linearGradient id="gem" x1="26" y1="28" x2="38" y2="40" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#eafcff"/>
+      <stop offset=".55" stop-color="#22e8ff"/>
+      <stop offset="1" stop-color="#ff2fd0"/>
+    </linearGradient>
+  </defs>
+  <rect x="8" y="30" width="48" height="24" rx="3" fill="url(#chassis)"/>
+  <rect x="8" y="30" width="48" height="24" rx="3" fill="none" stroke="#ff2fd0" stroke-width="2"/>
+  <path d="M8 30c0-9.5 6-16.5 24-16.5S56 20.5 56 30z" fill="url(#lid)"/>
+  <path d="M8 30c0-9.5 6-16.5 24-16.5S56 20.5 56 30" fill="none" stroke="#22e8ff" stroke-width="2.2"/>
+  <path d="M8 38h48" stroke="#22e8ff" stroke-width="1.6" stroke-opacity=".9"/>
+  <g fill="#ff2fd0">
+    <circle cx="13" cy="19" r="2"/>
+    <circle cx="51" cy="19" r="2"/>
+    <circle cx="11" cy="51" r="1.8"/>
+    <circle cx="53" cy="51" r="1.8"/>
+  </g>
+  <rect x="25" y="28.5" width="14" height="10.5" rx="2.4" fill="#0d0820" stroke="#ff2fd0" stroke-width="1.8"/>
+  <path d="M32 31 37 33v3.5c0 2.5-2 4-5 4.8-3-.8-5-2.3-5-4.8V33z" fill="url(#gem)"/>
+</svg>

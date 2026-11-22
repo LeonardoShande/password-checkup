@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Security Tech · Check-up de contraseñas</title>
+  <meta name="description" content="Descubre qué tan segura es una contraseña y de cuántas formas pueden vulnerarla en la web. Todo se analiza en tu navegador.">
+  <meta name="color-scheme" content="dark light">
+  <meta name="theme-color" content="#070a17">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="/lab.css">
+  <script src="/theme.js"></script>
+  <script src="/ascii.js"></script>
+</head>
+<body>
+  <!-- Logo reutilizable (sprite). No usar display:none: los degradados dejarían de pintarse. -->
+  <svg class="sprite" aria-hidden="true" focusable="false">
+    <symbol id="logo" viewBox="0 0 64 64">
+      <defs>
+        <linearGradient id="lg-chassis" x1="10" y1="14" x2="54" y2="56" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stop-color="#2a1a52"/>
+          <stop offset="1" stop-color="#140b2b"/>
+        </linearGradient>
+        <linearGradient id="lg-lid" x1="8" y1="14" x2="56" y2="30" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stop-color="#3a2470"/>
+          <stop offset="1" stop-color="#1c1040"/>
+        </linearGradient>
+        <linearGradient id="lg-gem" x1="26" y1="28" x2="38" y2="40" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stop-color="#eafcff"/>
+          <stop offset=".55" stop-color="#22e8ff"/>
+          <stop offset="1" stop-color="#ff2fd0"/>
+        </linearGradient>
+        <filter id="lg-glow" x="-60%" y="-60%" width="220%" height="220%">
+          <feGaussianBlur stdDeviation="1.6" result="b"/>
+          <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+      <rect x="8" y="30" width="48" height="24" rx="2" fill="url(#lg-chassis)"/>
+      <rect x="8" y="30" width="48" height="24" rx="2" fill="none" stroke="#ff2fd0" stroke-opacity=".9" stroke-width="1.4"/>
+      <path d="M8 30c0-9.5 6-16.5 24-16.5S56 20.5 56 30z" fill="url(#lg-lid)"/>
+      <path d="M8 30c0-9.5 6-16.5 24-16.5S56 20.5 56 30" fill="none" stroke="#22e8ff" stroke-width="1.6"/>
+      <g fill="none" stroke="#22e8ff" stroke-width="1.1" stroke-opacity=".85">
+        <path d="M13 30V17.5"/>
+        <path d="M51 30V17.5"/>
+        <path d="M8 38h48"/>
+      </g>
+      <g fill="#ff2fd0" filter="url(#lg-glow)">
+        <circle cx="13" cy="19" r="1.3"/>
+        <circle cx="51" cy="19" r="1.3"/>
+        <circle cx="11" cy="38" r="1.2"/>
+        <circle cx="53" cy="38" r="1.2"/>
+        <circle cx="11" cy="51" r="1.2"/>
+        <circle cx="53" cy="51" r="1.2"/>
+      </g>
+      <g fill="none" stroke="#5ff0ff" stroke-width="1" stroke-opacity=".55" stroke-linecap="round">
+        <path d="M14 45h7m0 0v4m0-4 4-3"/>
+        <path d="M50 45h-7m0 0v4m0-4-4-3"/>
+      </g>
+      <rect x="26" y="29" width="12" height="9" rx="2" fill="#0d0820" stroke="#ff2fd0" stroke-width="1.3"/>
+      <path d="M32 31.3 36 33v3.1c0 2.2-1.7 3.6-4 4.3-2.3-.7-4-2.1-4-4.3V33z" fill="url(#lg-gem)" filter="url(#lg-glow)"/>
+    </symbol>
+  </svg>
+
+  <!-- ============ INTRO ANIMADA ============ -->
+  <div id="intro" class="intro" role="dialog" aria-modal="true"
+       aria-label="Introducción animada de Security Tech. Pulsa Escape o toca la pantalla para saltarla.">
+    <div class="intro-stars" id="intro-stars" aria-hidden="true"></div>
+    <svg class="intro-logo" aria-hidden="true" focusable="false"><use href="#logo"/></svg>
+    <div class="intro-text" aria-hidden="true">
+      <pre class="intro-l intro-l1" id="intro-l1"></pre>
+      <pre class="intro-l intro-l2" id="intro-l2"></pre>
+    </div>
+    <p class="intro-tag" aria-hidden="true"><span>&gt; iniciando escudo de seguridad…</span></p>
+    <div class="intro-bar" aria-hidden="true"><i></i></div>
+    <p class="intro-hint">Pulsa <kbd>ESC</kbd> o <strong>toca la pantalla</strong> para saltar</p>
+    <button type="button" class="intro-skip" id="intro-skip">Saltar intro ▸</button>
+  </div>
+
+  <div id="app">
+    <a class="skip" href="#probar">Saltar al verificador</a>
+    <div class="starfield" id="starfield" aria-hidden="true"></div>
+
+    <!-- ============ MENÚ LATERAL ============ -->
+    <nav class="rail" aria-label="Secciones de la página">
+      <ul>
+        <li><a href="#inicio" data-nav="inicio"><span class="n" aria-hidden="true">01</span><span class="t">Inicio</span></a></li>
+        <li><a href="#probar" data-nav="probar"><span class="n" aria-hidden="true">02</span><span class="t">Probar</span></a></li>
+        <li><a href="#resultados" data-nav="resultados"><span class="n" aria-hidden="true">03</span><span class="t">Resultado</span></a></li>
+        <li><a href="#amenazas" data-nav="amenazas"><span class="n" aria-hidden="true">04</span><span class="t">Amenazas</span></a></li>
+        <li><a href="#avanzado" data-nav="avanzado"><span class="n" aria-hidden="true">05</span><span class="t">Avanzado</span></a></li>
+        <li><a href="#defensa" data-nav="defensa"><span class="n" aria-hidden="true">06</span><span class="t">Protégete</span></a></li>
+        <li><a href="/lab.html" data-nav="lab"><span class="n" aria-hidden="true">⌨</span><span class="t">Laboratorio</span></a></li>
+        <li class="rail-sep" role="presentation"></li>
+        <li class="rail-tool"><button type="button" id="rail-intro"><span class="n" aria-hidden="true">▶</span><span class="t">Ver intro</span></button></li>
+        <li class="rail-tool"><button type="button" id="rail-top"><span class="n" aria-hidden="true">↑</span><span class="t">Arriba</span></button></li>
+      </ul>
+    </nav>
+
+    <!-- ============ HERO ============ -->
+    <header class="hero" id="inicio">
+      <div class="wrap topbar">
+        <a class="brand" href="#inicio" aria-label="Security Tech, inicio">
+          <svg class="logo" aria-hidden="true" focusable="false"><use href="#logo"/></svg>
+          <span class="brand-name">Security<b>Tech</b></span>
+        </a>
+        <div class="topbar-actions">
+          <button id="ascii-toggle" class="btn btn-ghost" type="button" aria-pressed="false"
+                  aria-label="Activar o desactivar el diseño ASCII de toda la página">
+            <span aria-hidden="true">▤</span> <span>ASCII</span> <span id="ascii-state" class="ascii-state">OFF</span>
+          </button>
+          <button id="sound-toggle" class="btn btn-ghost" type="button" aria-pressed="false"
+                  aria-label="Activar o desactivar los sonidos de la interfaz">
+            <span aria-hidden="true">🔈</span> <span>Sonido</span> <span id="sound-state" class="sound-state">OFF</span>
+          </button>
+          <button id="theme-toggle" class="btn btn-ghost" type="button" aria-pressed="true"
+                  aria-label="Cambiar entre tema oscuro y claro">
+            <span id="theme-icon" aria-hidden="true">☀</span> <span id="theme-label">Modo claro</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="wrap hero-grid">
+        <div class="hero-copy">
+          <p class="eyebrow">Laboratorio de contraseñas</p>
+          <h1>Check-up de contraseñas</h1>
+          <pre class="ascii-banner" id="ascii-banner" aria-hidden="true"></pre>
+          <p class="lead">Escribe una contraseña, mira qué tan fuerte es y descubre de cuántas formas pueden vulnerarla en la web.</p>
+          <p class="hero-cta">
+            <a class="btn btn-primary" href="#probar">Probar una contraseña</a>
+            <a class="btn" href="#avanzado">¿Es segura esta web?</a>
+          </p>
+          <ul class="trust" aria-label="Garantías">
+            <li>Todo en tu navegador</li>
+            <li>Sin registro</li>
+            <li>Sin rastreo</li>
+          </ul>
+        </div>
+        <figure class="art" aria-hidden="true">
+          <pre class="art-pre art-dark" id="art-dark"></pre>
+          <pre class="art-pre art-light" id="art-light"></pre>
+        </figure>
+      </div>
+    </header>
+
+    <main class="wrap">
+      <!-- ============ 02 · PROBAR ============ -->
+      <section class="card checker" id="probar" aria-labelledby="checker-title">
+        <h2 id="checker-title" class="sec-title"><span class="sec-num">02</span> Prueba una contraseña</h2>
+
+        <label for="pw" class="field-label">Contraseña a analizar</label>
+        <div class="input-row">
+          <input id="pw" type="password" autocomplete="off" autocapitalize="none" spellcheck="false"
+                 maxlength="256" placeholder="Escribe aquí… (sin espacios)"
+                 aria-describedby="rule-note space-msg privacy-note">
+          <button id="toggle" type="button" class="btn" aria-pressed="false">Mostrar</button>
+        </div>
+        <p id="rule-note" class="rule">🚫 No se admiten espacios. Para una frase, separa las palabras con <code>-</code> o <code>_</code>.</p>
+        <p id="space-msg" class="space-msg" role="status" aria-live="polite"></p>
+
+        <p id="privacy-note" class="privacy">
+          🔒 El análisis se hace <strong>en tu navegador</strong>: la contraseña no se envía a ningún servidor.
+          Aun así, <strong>no pruebes tu contraseña real</strong>: usa una parecida.
+        </p>
+
+        <div class="hibp">
+          <label class="check">
+            <input id="hibp" type="checkbox">
+            <span>Comprobar también si apareció en filtraciones públicas <em>(opcional)</em></span>
+          </label>
+          <p class="hint">Solo se envían los 5 primeros caracteres del hash SHA-1 (k-anonimato) a Have I Been Pwned; nunca la contraseña.</p>
+          <p id="hibp-status" class="hibp-status" role="status"></p>
+        </div>
+      </section>
+
+      <p id="sr-status" class="sr-only" role="status" aria-live="polite"></p>
+
+      <!-- ============ 03 · RESULTADO ============ -->
+      <section id="resultados" class="results" aria-labelledby="results-title" tabindex="-1">
+        <h2 id="results-title" class="sr-only">Resultados</h2>
+        <div id="empty" class="card empty">
+          <p>👆 Escribe una contraseña para ver su puntaje, <strong>cómo podrían vulnerarla</strong> y cuánto tardarían en adivinarla.</p>
+        </div>
+        <div id="analysis" hidden></div>
+      </section>
+
+      <!-- ============ 04 · AMENAZAS ============ -->
+      <section class="threats" id="amenazas" aria-labelledby="threats-title">
+        <h2 id="threats-title" class="sec-title"><span class="sec-num">04</span> ¿De cuántas formas pueden vulnerar tu contraseña?</h2>
+        <p class="section-lead">
+          Una contraseña fuerte te protege de <em>adivinarla</em>, pero no de todo. Cada tarjeta explica una amenaza;
+          pulsa <strong>Más info</strong> para ver el detalle, consejos y fuentes.
+        </p>
+        <nav class="chips" id="chips" aria-label="Ir a una amenaza"></nav>
+        <div id="cards" class="cards"><p class="loading">Cargando contenido…</p></div>
+      </section>
+
+      <!-- ============ 05 · AVANZADO ============ -->
+      <section class="threats" id="avanzado" aria-labelledby="adv-title">
+        <h2 id="adv-title" class="sec-title"><span class="sec-num">05</span> Avanzado · ¿Es segura la web de mi contraseña real?</h2>
+        <p class="section-lead">
+          La contraseña real solo se escribe en el sitio real. Aprende a comprobarlo y prueba las herramientas:
+          todo se ejecuta en tu navegador.
+        </p>
+        <div id="advanced-cards" class="cards"></div>
+      </section>
+
+      <!-- ============ 06 · PROTÉGETE ============ -->
+      <section class="threats" id="defensa" aria-labelledby="def-title">
+        <h2 id="def-title" class="sec-title"><span class="sec-num">06</span> Protégete</h2>
+        <div class="tools-wrap">
+          <article class="card tools-card" aria-labelledby="tools-title">
+            <h3 id="tools-title" class="tools-title">🛠️ Herramientas de defensa y de práctica</h3>
+
+            <details class="disclosure">
+              <summary>🧩 ¿Qué es un CAPTCHA y cómo funciona?</summary>
+              <div class="disclosure-body">
+                <p>Un CAPTCHA es una prueba que distingue a una persona de un programa automático. Sirve para frenar registros masivos, spam y ataques de fuerza bruta repetidos.</p>
+                <h4>Tipos habituales</h4>
+                <ul>
+                  <li><strong>Texto distorsionado:</strong> leer letras deformadas. Hoy la IA las resuelve con facilidad.</li>
+                  <li><strong>Imágenes:</strong> «elige los semáforos». Mejor que el texto, pero también resoluble.</li>
+                  <li><strong>Casilla «No soy un robot»:</strong> analiza cómo navegas antes de pedir nada extra.</li>
+                  <li><strong>Invisible:</strong> puntúa la sesión sin molestar; solo pide una prueba si la puntuación es sospechosa.</li>
+                  <li><strong>Prueba de trabajo:</strong> obliga al navegador a hacer un cálculo corto; encarece ataques masivos sin pedir nada al usuario.</li>
+                </ul>
+                <h4>Lo que sí y lo que no hace</h4>
+                <ul>
+                  <li>✅ Encarece los ataques automáticos a gran escala.</li>
+                  <li>⚠️ No detiene a quien paga a personas para resolverlo ni a una IA avanzada.</li>
+                  <li>⚠️ Puede excluir a personas con discapacidad visual o motora; por eso conviene ofrecer una alternativa accesible.</li>
+                  <li>⚠️ No protege contra phishing, malware ni contraseñas reutilizadas. Eso lo hacen la contraseña única y el 2FA.</li>
+                </ul>
+                <h4>Si tu sitio lo usa, hazlo bien</h4>
+                <ul>
+                  <li><strong>Verifica siempre en el servidor</strong> la respuesta con la clave secreta del proveedor. Comprobarla solo en el navegador se puede saltar.</li>
+                  <li>Úsalo junto con límite de intentos, bloqueo progresivo y 2FA; no basta solo.</li>
+                  <li>Muéstralo tras varios fallos, no en cada visita, para no molestar a quien entra bien.</li>
+                </ul>
+              </div>
+            </details>
+
+            <h4 class="tools-sub">Laboratorio de ataques (simulado)</h4>
+            <p class="tools-lead">Pulsa un icono para abrir esa herramienta en el laboratorio. Todo son datos ficticios.</p>
+            <ul class="lab-icons">
+              <li><a class="lab-icon" href="/lab.html#diccionario">
+                <span class="li-ico" aria-hidden="true">📚</span>
+                <span class="li-t">Ataque de diccionario</span>
+                <span class="li-go">Abrir →</span></a></li>
+              <li><a class="lab-icon" href="/lab.html#sqli">
+                <span class="li-ico" aria-hidden="true">💉</span>
+                <span class="li-t">Inyección SQL</span>
+                <span class="li-go">Abrir →</span></a></li>
+              <li><a class="lab-icon" href="/lab.html#hash">
+                <span class="li-ico" aria-hidden="true">🧪</span>
+                <span class="li-t">Hash paso a paso</span>
+                <span class="li-go">Abrir →</span></a></li>
+              <li><a class="lab-icon" href="/lab.html#terminal">
+                <span class="li-ico" aria-hidden="true">⌨️</span>
+                <span class="li-t">Simulador de terminal</span>
+                <span class="li-go">Abrir →</span></a></li>
+            </ul>
+          </article>
+        </div>
+        <div id="defense-cards" class="cards"></div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <pre class="horizon" id="horizon" aria-hidden="true"></pre>
+      <div class="wrap">
+        <p>Proyecto educativo. El puntaje es una estimación didáctica (entropía y patrones), no una garantía de seguridad.</p>
+        <p>Los tiempos son ilustrativos y asumen velocidades de ataque «clásicas» (como en zxcvbn).</p>
+        <p><button type="button" class="linklike" id="footer-intro">▶ Ver la intro de nuevo</button> · <a href="#inicio">Volver arriba</a></p>
+      </div>
+    </footer>
+  </div>
+
+  <script src="/intro.js"></script>
+  <script src="/shared/scoring.js"></script>
+  <script src="/shared/attacks.js"></script>
+  <script src="/shared/urlcheck.js"></script>
+  <script src="/art.js"></script>
+  <script src="/sound.js"></script>
+  <script src="/app.js"></script>
+</body>
+</html>
