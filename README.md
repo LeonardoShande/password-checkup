@@ -17,7 +17,7 @@ ____   _____   ____  _   _  ____   ___  _____ __   __
 # Security Tech · Check-up de contraseñas
 
 Página educativa donde escribes una contraseña y, debajo, ves **qué tan segura es** y **de cuántas formas podrían vulnerarla en la web**. Backend Node sin dependencias + frontend HTML/CSS/JS.
-
+```
 `
  .      *       _.-""""""-._      .            /\        +
     .        .-'  .   .     '-.        *      /  \    .
@@ -25,7 +25,7 @@ Página educativa donde escribes una contraseña y, debajo, ves **qué tan segur
    *         '.   .    .   .  .'       .     |    |  *
          .      '-.......-'       +       /_|____|_\
 `
-
+```
 ## Novedades de la v1.5
 
 - **Logo nuevo**: un cofre cibernético (estilo bloques, tipo *voxel*) en morado/magenta/cian con una gema luminosa como cerradura, reemplazando el escudo anterior.
